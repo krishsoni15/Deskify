@@ -1,10 +1,8 @@
 # Deskify
 
-> Turn any website into a standalone Electron desktop application wrapper.
-
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org/) [![Electron](https://img.shields.io/badge/Electron.js-30-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) [![License: MIT](https://img.shields.io/badge/License-MIT-000000.svg)](https://opensource.org/licenses/MIT)
-
 **Deskify** is a modern SaaS web application that turns any HTTP/HTTPS website URL into a standalone, native Electron desktop application wrapper. Configure window parameters, appearance themes, custom icons, and executable launcher scripts, then package and download a production-ready desktop project.
+
+Built for developers and teams who need native desktop wrappers with custom window controls, offline launcher scripts, and zero server database costs. Everything in this generator runs directly in the browser with instant local persistence.
 
 
 ## Product
