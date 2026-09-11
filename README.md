@@ -1,11 +1,12 @@
-# Deskify
+# Deskify — Turn Any Website Into a Desktop App
 
-> Turn any website into a desktop app.
+[![Next.js](https://img.shields.io/badge/Next.js-16_App_Router-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![Electron.js](https://img.shields.io/badge/Electron-Desktop_Wrapper-47848F?style=for-the-badge&logo=electron&logoColor=white)](https://www.electronjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-[![GitHub](https://img.shields.io/badge/GitHub-krishsoni15%2FDeskify-000000?logo=github)](https://github.com/krishsoni15/Deskify)
-[![License: MIT](https://img.shields.io/badge/License-MIT-000000.svg)](https://opensource.org/licenses/MIT)
-
-Deskify is a SaaS web application that generates complete Electron desktop application projects from any website URL. Configure your app, generate the project, and download a ready-to-run ZIP.
+**Deskify** is a modern SaaS web application that turns any HTTP/HTTPS website URL into a standalone, native Electron desktop application wrapper. Configure window parameters, appearance themes, custom icons, and executable launcher scripts, then package and download a production-ready desktop project.
 
 
 ## Product
@@ -17,17 +18,19 @@ Deskify is a SaaS web application that generates complete Electron desktop appli
 3. Download a complete Electron project as a ZIP
 4. Extract, run `npm install` && `npm start` — your desktop app launches
 
-## Tech Stack
+## Tech Stack & Architecture
 
-- **Framework:** Next.js 16 (App Router)
+- **Web App Framework:** Next.js 16 (App Router) & React 19
+- **Generated Output Engine:** Electron.js (Multi-platform desktop runtime)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS 4
-- **UI Components:** Custom (shadcn-style with CVA)
-- **Icons:** Lucide React
+- **Styling & Design System:** Tailwind CSS 4 (Strict Monochrome Black & White Palette)
+- **Interactive Canvas:** GSAP & React Bits `<DotGrid />` cursor proximity canvas
+- **UI Components:** Custom (shadcn-style with Class Variance Authority)
+- **Icons:** Lucide React & Custom SVG Renderers
 - **Animations:** Framer Motion
-- **Validation:** Zod
-- **ZIP Generation:** JSZip
-- **Theme:** next-themes (dark/light mode)
+- **Validation:** Zod schemas
+- **ZIP Packaging:** JSZip & Node Buffer Streams
+- **Theme:** next-themes (Dark / Light / System modes)
 
 ## Getting Started
 
