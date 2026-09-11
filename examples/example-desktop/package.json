@@ -1,0 +1,14 @@
+{
+  "name": "example-desktop",
+  "version": "1.0.0",
+  "description": "Desktop application for Example Website",
+  "main": "main.js",
+  "author": "Deskify",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^44.0.0"
+  }
+}
