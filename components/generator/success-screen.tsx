@@ -113,8 +113,8 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
           onClick={onDownload}
           className="w-full h-14 text-base font-extrabold shadow-xl rounded-2xl group transition-all duration-200"
         >
-          <Download className="h-5 w-5 mr-2.5 transition-transform group-hover:translate-y-0.5 text-zinc-950" />
-          <span className="text-zinc-950">Download Universal Package (.ZIP)</span>
+          <Download className="h-5 w-5 mr-2.5 transition-transform group-hover:translate-y-0.5" />
+          <span>Download Universal Package (.ZIP)</span>
         </Button>
 
         {/* Clean feature list under button */}
@@ -200,7 +200,7 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Right-click <code className="font-mono text-foreground font-bold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Run-Linux.sh</code> → select <strong>"Run as a Program"</strong> (or run <code className="font-mono text-foreground font-bold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">bash Run-Linux.sh</code> in terminal).</span>
+                  <span className="pt-0.5">Right-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Linux.sh</code> → select <strong>"Run as a Program"</strong> (or run <button onClick={() => handleCopy("bash Run-Linux.sh", setCopiedDevCmd)} className="inline-flex items-center gap-1 font-mono text-foreground font-semibold bg-muted hover:bg-muted/80 px-1.5 py-0.5 rounded border border-border transition-colors cursor-pointer" title="Click to copy command"><code>bash Run-Linux.sh</code>{copiedDevCmd ? <Check className="h-3 w-3 inline text-foreground ml-0.5" /> : <Copy className="h-3 w-3 inline ml-0.5 opacity-60" />}</button> in terminal).</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
@@ -223,7 +223,7 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-bold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Run-Mac.command</code> in Finder.</span>
+                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Mac.command</code> in Finder.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
@@ -246,7 +246,7 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-bold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Install-Silent-Windows.vbs</code> or <code className="font-mono text-foreground font-bold bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">Run-Windows.bat</code>.</span>
+                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Install-Silent-Windows.vbs</code> or <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Windows.bat</code>.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
@@ -263,10 +263,10 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
                 Developer Commands & Native Installer Build:
               </h3>
               <div className="space-y-2 font-mono text-[11px]">
-                <div className="p-2.5 bg-black/90 rounded-lg border border-zinc-800 text-zinc-100">
-                  <div className="flex items-center justify-between font-sans text-[11px] text-zinc-400 mb-1 border-b border-zinc-800 pb-1">
+                <div className="p-2.5 bg-muted/60 dark:bg-black/90 rounded-lg border border-border dark:border-zinc-800 text-foreground dark:text-zinc-100">
+                  <div className="flex items-center justify-between font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mb-1 border-b border-border/60 dark:border-zinc-800 pb-1">
                     <span>Dev Launch Command</span>
-                    <button onClick={() => handleCopy(devCmd, setCopiedDevCmd)} className="text-zinc-400 hover:text-white flex items-center gap-1 font-sans">
+                    <button onClick={() => handleCopy(devCmd, setCopiedDevCmd)} className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 font-sans cursor-pointer transition-colors">
                       {copiedDevCmd ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
                       <span>{copiedDevCmd ? "Copied" : "Copy"}</span>
                     </button>
@@ -274,10 +274,10 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
                   <code>{devCmd}</code>
                 </div>
 
-                <div className="p-2.5 bg-black/90 rounded-lg border border-zinc-800 text-zinc-100">
-                  <div className="flex items-center justify-between font-sans text-[11px] text-zinc-400 mb-1 border-b border-zinc-800 pb-1">
+                <div className="p-2.5 bg-muted/60 dark:bg-black/90 rounded-lg border border-border dark:border-zinc-800 text-foreground dark:text-zinc-100">
+                  <div className="flex items-center justify-between font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mb-1 border-b border-border/60 dark:border-zinc-800 pb-1">
                     <span>Build Executable Installers (.exe / .dmg / .AppImage)</span>
-                    <button onClick={() => handleCopy(buildCmd, setCopiedBuildCmd)} className="text-zinc-400 hover:text-white flex items-center gap-1 font-sans">
+                    <button onClick={() => handleCopy(buildCmd, setCopiedBuildCmd)} className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 font-sans cursor-pointer transition-colors">
                       {copiedBuildCmd ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
                       <span>{copiedBuildCmd ? "Copied" : "Copy"}</span>
                     </button>
