@@ -5,6 +5,9 @@ import { generateConfigJs } from "@/lib/templates/config-js";
 import { generatePackageJson } from "@/lib/templates/package-json";
 import { generateReadme } from "@/lib/templates/readme";
 import { generateGitignore } from "@/lib/templates/gitignore";
+import { generateElectronBuilderYml } from "@/lib/templates/electron-builder-yml";
+import { generateGithubWorkflow } from "@/lib/templates/github-workflow";
+import { generateMacEntitlements } from "@/lib/templates/mac-entitlements";
 import { slugify } from "@/lib/utils";
 
 export interface GeneratedFile {
@@ -48,8 +51,20 @@ export async function generateProject(
       content: generatePackageJson(config),
     },
     {
+      path: `${dirName}/electron-builder.yml`,
+      content: generateElectronBuilderYml(config),
+    },
+    {
+      path: `${dirName}/.github/workflows/build-and-sign.yml`,
+      content: generateGithubWorkflow(config),
+    },
+    {
+      path: `${dirName}/build/entitlements.mac.plist`,
+      content: generateMacEntitlements(),
+    },
+    {
       path: `${dirName}/main.js`,
-      content: generateMainJs(config),
+      content: generateMainJs(),
     },
     {
       path: `${dirName}/preload.js`,
@@ -67,6 +82,7 @@ export async function generateProject(
       path: `${dirName}/.gitignore`,
       content: generateGitignore(),
     },
+
     // 1-Click Executable Launchers for Linux, Mac, Windows
     {
       path: `${dirName}/Run-Linux.sh`,

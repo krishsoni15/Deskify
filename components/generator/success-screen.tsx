@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   CheckCircle2,
@@ -11,7 +11,7 @@ import {
   Terminal,
   FolderArchive,
   FileCode,
-  Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { slugify } from "@/lib/utils";
@@ -23,7 +23,7 @@ interface SuccessScreenProps {
   onCreateAnother: () => void;
 }
 
-type Tab = "linux" | "mac" | "windows" | "developer";
+type Tab = "mac" | "windows" | "linux" | "developer" | "signing";
 
 function AppleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -50,28 +50,26 @@ function LinuxIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessScreenProps) {
-  const [activeTab, setActiveTab] = useState<Tab>("linux");
-  const [copiedDevCmd, setCopiedDevCmd] = useState(false);
-  const [copiedBuildCmd, setCopiedBuildCmd] = useState(false);
-
-  useEffect(() => {
+  const [activeTab] = useState<Tab>(() => {
     if (typeof window !== "undefined") {
       const ua = navigator.userAgent.toLowerCase();
-      if (ua.includes("mac")) {
-        setActiveTab("mac");
-      } else if (ua.includes("win")) {
-        setActiveTab("windows");
-      } else {
-        setActiveTab("linux");
-      }
+      if (ua.includes("mac")) return "mac";
+      if (ua.includes("win")) return "windows";
+      return "linux";
     }
-  }, []);
+    return "mac";
+  });
+  const [currentTab, setActiveTab] = useState<Tab>(activeTab);
+  const [copiedDevCmd, setCopiedDevCmd] = useState(false);
+  const [copiedWinCmd, setCopiedWinCmd] = useState(false);
+  const [copiedMacCmd, setCopiedMacCmd] = useState(false);
 
   const slug = slugify(config.name) || "desktop-app";
   const folderName = `${slug}-desktop`;
 
   const devCmd = `cd ${folderName} && npm install && npm start`;
-  const buildCmd = `cd ${folderName} && npm install && npx electron-builder`;
+  const winBuildCmd = `cd ${folderName} && npm install && npm run build:win`;
+  const macBuildCmd = `cd ${folderName} && npm install && npm run build:mac`;
 
   const handleCopy = (text: string, setFn: (v: boolean) => void) => {
     navigator.clipboard.writeText(text);
@@ -102,7 +100,7 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
       </h2>
 
       <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground max-w-md leading-relaxed">
-        We've generated the complete Electron desktop app project for <strong className="text-foreground">{config.name || "your website"}</strong>.
+        We&apos;ve generated the complete Electron desktop app project for <strong className="text-foreground">{config.name || "your website"}</strong>.
       </p>
 
       {/* Main Download Button */}
@@ -124,58 +122,70 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
           </span>
           <span className="text-border">•</span>
           <span className="flex items-center gap-1.5">
-            <Check className="h-3.5 w-3.5 text-foreground" /> 1-Click Launchers
+            <Check className="h-3.5 w-3.5 text-foreground" /> Mac & Win Installers
           </span>
           <span className="text-border">•</span>
           <span className="flex items-center gap-1.5">
-            <Check className="h-3.5 w-3.5 text-foreground" /> Full Source Code
+            <Check className="h-3.5 w-3.5 text-foreground" /> Code Signing Setup
           </span>
         </div>
       </div>
 
       {/* OS Guide Navigation Tabs */}
       <div className="mt-8 w-full text-left">
-        <div className="flex items-center justify-between border-b border-border mb-4">
-          <button
-            onClick={() => setActiveTab("linux")}
-            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === "linux"
-                ? "border-foreground text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <LinuxIcon className="h-3.5 w-3.5" />
-            Linux Guide
-          </button>
-
+        <div className="flex items-center justify-between border-b border-border mb-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab("mac")}
-            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === "mac"
+            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors shrink-0 ${
+              currentTab === "mac"
                 ? "border-foreground text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <AppleIcon className="h-3.5 w-3.5" />
-            macOS Guide
+            macOS (.dmg)
           </button>
 
           <button
             onClick={() => setActiveTab("windows")}
-            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === "windows"
+            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors shrink-0 ${
+              currentTab === "windows"
                 ? "border-foreground text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
             <WindowsIcon className="h-3.5 w-3.5" />
-            Windows Guide
+            Windows (.exe)
+          </button>
+
+          <button
+            onClick={() => setActiveTab("linux")}
+            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors shrink-0 ${
+              currentTab === "linux"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <LinuxIcon className="h-3.5 w-3.5" />
+            Linux
+          </button>
+
+          <button
+            onClick={() => setActiveTab("signing")}
+            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors shrink-0 ${
+              currentTab === "signing"
+                ? "border-foreground text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Code Signing CI
           </button>
 
           <button
             onClick={() => setActiveTab("developer")}
-            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors ${
-              activeTab === "developer"
+            className={`pb-2.5 px-3 text-xs font-semibold flex items-center gap-1.5 border-b-2 transition-colors shrink-0 ${
+              currentTab === "developer"
                 ? "border-foreground text-foreground"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
@@ -187,76 +197,119 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
 
         {/* Tab Content Cards */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          {activeTab === "linux" && (
+          {currentTab === "mac" && (
+            <div className="space-y-3">
+              <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
+                <AppleIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                macOS App Options & Building (.dmg):
+              </h3>
+              <ol className="space-y-2 text-xs text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">1</span>
+                  <span className="pt-0.5">
+                    <strong>Quick Launch:</strong> Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Mac.command</code> in Finder to test instantly.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
+                  <span className="pt-0.5">
+                    <strong>Build Native Mac Installer (.dmg):</strong> Run <button onClick={() => handleCopy(macBuildCmd, setCopiedMacCmd)} className="inline-flex items-center gap-1 font-mono text-foreground font-semibold bg-muted hover:bg-muted/80 px-2 py-0.5 rounded border border-border transition-all cursor-pointer shadow-xs" title="Click to copy command"><code>npm run build:mac</code>{copiedMacCmd ? <Check className="h-3 w-3 inline text-foreground ml-0.5" /> : <Copy className="h-3 w-3 inline ml-0.5 opacity-60" opacity={0.6} />}</button> to create a native macOS `.dmg` installer inside <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">dist/</code>.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
+                  <span className="pt-0.5">
+                    <strong>Apple Gatekeeper Signing:</strong> Set your Apple Developer ID certificate (<code className="font-mono text-foreground">CSC_LINK</code>) to notarize the app automatically for macOS.
+                  </span>
+                </li>
+              </ol>
+            </div>
+          )}
+
+          {currentTab === "windows" && (
+            <div className="space-y-3">
+              <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
+                <WindowsIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                Windows App Options & Building (.exe):
+              </h3>
+              <ol className="space-y-2 text-xs text-muted-foreground">
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">1</span>
+                  <span className="pt-0.5">
+                    <strong>Quick Launch:</strong> Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Install-Silent-Windows.vbs</code> or <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Windows.bat</code>.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
+                  <span className="pt-0.5">
+                    <strong>Build Windows Setup Installer (.exe):</strong> Run <button onClick={() => handleCopy(winBuildCmd, setCopiedWinCmd)} className="inline-flex items-center gap-1 font-mono text-foreground font-semibold bg-muted hover:bg-muted/80 px-2 py-0.5 rounded border border-border transition-all cursor-pointer shadow-xs" title="Click to copy command"><code>npm run build:win</code>{copiedWinCmd ? <Check className="h-3 w-3 inline text-foreground ml-0.5" /> : <Copy className="h-3 w-3 inline ml-0.5 opacity-60" opacity={0.6} />}</button> to build a production NSIS installer.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
+                  <span className="pt-0.5">
+                    <strong>Smart App Control / Defender Signing:</strong> Pass your `.pfx` code-signing certificate via <code className="font-mono text-foreground">WIN_CSC_LINK</code> env variable to remove Windows security popups.
+                  </span>
+                </li>
+              </ol>
+            </div>
+          )}
+
+          {currentTab === "linux" && (
             <div className="space-y-3">
               <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
                 <LinuxIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                How to Run on Linux:
+                How to Run & Package on Linux:
               </h3>
               <ol className="space-y-2.5 text-xs text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">1</span>
-                  <span className="pt-0.5">Extract <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">{folderName}.zip</code>.</span>
+                  <span className="pt-0.5">
+                    Extract <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">{folderName}.zip</code>.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Right-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Linux.sh</code> → select <strong>"Run as a Program"</strong> (or run <button onClick={() => handleCopy("bash Run-Linux.sh", setCopiedDevCmd)} className="inline-flex items-center gap-1 font-mono text-foreground font-semibold bg-muted hover:bg-muted/80 px-2 py-0.5 rounded border border-border transition-all cursor-pointer shadow-xs" title="Click to copy command"><code>bash Run-Linux.sh</code>{copiedDevCmd ? <Check className="h-3 w-3 inline text-foreground ml-0.5" /> : <Copy className="h-3 w-3 inline ml-0.5 opacity-60" opacity={0.6} />}</button> in terminal).</span>
+                  <span className="pt-0.5">
+                    Right-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Linux.sh</code> → select <strong>&quot;Run as a Program&quot;</strong> (or run <button onClick={() => handleCopy("bash Run-Linux.sh", setCopiedDevCmd)} className="inline-flex items-center gap-1 font-mono text-foreground font-semibold bg-muted hover:bg-muted/80 px-2 py-0.5 rounded border border-border transition-all cursor-pointer shadow-xs" title="Click to copy command"><code>bash Run-Linux.sh</code>{copiedDevCmd ? <Check className="h-3 w-3 inline text-foreground ml-0.5" /> : <Copy className="h-3 w-3 inline ml-0.5 opacity-60" opacity={0.6} />}</button> in terminal).
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
-                  <span className="pt-0.5 font-medium text-foreground">Your desktop app window launches automatically!</span>
+                  <span className="pt-0.5 font-medium text-foreground">
+                    To build `.AppImage` & `.deb` packages, run <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">npm run build:linux</code>.
+                  </span>
                 </li>
               </ol>
             </div>
           )}
 
-          {activeTab === "mac" && (
-            <div className="space-y-3">
+          {currentTab === "signing" && (
+            <div className="space-y-3 text-xs text-muted-foreground">
               <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
-                <AppleIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                How to Run on macOS:
+                <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                Automated Code Signing CI (GitHub Actions):
               </h3>
-              <ol className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">1</span>
-                  <span className="pt-0.5">Extract <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">{folderName}.zip</code>.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Mac.command</code> in Finder.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
-                  <span className="pt-0.5 font-medium text-foreground">Your macOS desktop app window opens automatically!</span>
-                </li>
-              </ol>
+              <p className="leading-relaxed">
+                Your generated app ZIP includes <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">.github/workflows/build-and-sign.yml</code>.
+              </p>
+              <div className="p-3 bg-muted/50 rounded-lg border border-border space-y-2">
+                <div className="font-semibold text-foreground">Steps to Build Signed Installers on GitHub:</div>
+                <ul className="list-disc pl-4 space-y-1">
+                  <li>Push your generated app project to GitHub.</li>
+                  <li>In GitHub Repo → Settings → Secrets & Variables → Actions, add:</li>
+                  <ul className="pl-4 font-mono text-[11px] text-foreground space-y-0.5">
+                    <li><strong className="text-foreground">WIN_CSC_LINK</strong>: Base64 string of your Windows `.pfx` certificate.</li>
+                    <li><strong className="text-foreground">WIN_CSC_KEY_PASSWORD</strong>: Password for your certificate.</li>
+                    <li><strong className="text-foreground">CSC_LINK</strong> / <strong className="text-foreground">APPLE_ID</strong>: For macOS Apple Developer ID notarization.</li>
+                  </ul>
+                  <li>GitHub Actions will build signed Windows `.exe` and macOS `.dmg` installers automatically!</li>
+                </ul>
+              </div>
             </div>
           )}
 
-          {activeTab === "windows" && (
-            <div className="space-y-3">
-              <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
-                <WindowsIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                How to Run on Windows (Silent 1-Click):
-              </h3>
-              <ol className="space-y-2 text-xs text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">1</span>
-                  <span className="pt-0.5">Extract <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">{folderName}.zip</code>.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">2</span>
-                  <span className="pt-0.5">Double-click <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Install-Silent-Windows.vbs</code> or <code className="font-mono text-foreground font-semibold bg-muted px-1.5 py-0.5 rounded border border-border">Run-Windows.bat</code>.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground font-bold text-[10px]">3</span>
-                  <span className="pt-0.5 font-medium text-foreground">Windows silently launches your desktop app window!</span>
-                </li>
-              </ol>
-            </div>
-          )}
-
-          {activeTab === "developer" && (
+          {currentTab === "developer" && (
             <div className="space-y-3">
               <h3 className="font-bold text-xs flex items-center gap-2 text-foreground">
                 <Terminal className="h-3.5 w-3.5 text-muted-foreground" />
@@ -276,13 +329,24 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
 
                 <div className="p-2.5 bg-muted/60 dark:bg-black/90 rounded-lg border border-border dark:border-zinc-800 text-foreground dark:text-zinc-100">
                   <div className="flex items-center justify-between font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mb-1 border-b border-border/60 dark:border-zinc-800 pb-1">
-                    <span>Build Executable Installers (.exe / .dmg / .AppImage)</span>
-                    <button onClick={() => handleCopy(buildCmd, setCopiedBuildCmd)} className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 font-sans cursor-pointer transition-colors">
-                      {copiedBuildCmd ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
-                      <span>{copiedBuildCmd ? "Copied" : "Copy"}</span>
+                    <span>Build Windows Installer (.exe)</span>
+                    <button onClick={() => handleCopy(winBuildCmd, setCopiedWinCmd)} className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 font-sans cursor-pointer transition-colors">
+                      {copiedWinCmd ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
+                      <span>{copiedWinCmd ? "Copied" : "Copy"}</span>
                     </button>
                   </div>
-                  <code>{buildCmd}</code>
+                  <code>{winBuildCmd}</code>
+                </div>
+
+                <div className="p-2.5 bg-muted/60 dark:bg-black/90 rounded-lg border border-border dark:border-zinc-800 text-foreground dark:text-zinc-100">
+                  <div className="flex items-center justify-between font-sans text-[11px] text-muted-foreground dark:text-zinc-400 mb-1 border-b border-border/60 dark:border-zinc-800 pb-1">
+                    <span>Build macOS Installer (.dmg)</span>
+                    <button onClick={() => handleCopy(macBuildCmd, setCopiedMacCmd)} className="text-muted-foreground hover:text-foreground dark:text-zinc-400 dark:hover:text-white flex items-center gap-1 font-sans cursor-pointer transition-colors">
+                      {copiedMacCmd ? <Check className="h-3 w-3 text-foreground" /> : <Copy className="h-3 w-3" />}
+                      <span>{copiedMacCmd ? "Copied" : "Copy"}</span>
+                    </button>
+                  </div>
+                  <code>{macBuildCmd}</code>
                 </div>
               </div>
             </div>
@@ -302,14 +366,18 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
               v{config.version || "1.0.0"}
             </span>
             <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
-              12 files • Electron
+              15 files • Electron & CI
             </span>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-muted-foreground">
           <div className="flex items-center gap-1.5 bg-muted/40 p-2 rounded-lg border border-border/50">
-            <Terminal className="h-3.5 w-3.5 text-foreground shrink-0" />
-            <span className="truncate text-foreground font-semibold">Run-Linux.sh</span>
+            <FileCode className="h-3.5 w-3.5 text-foreground shrink-0" />
+            <span className="truncate text-foreground font-semibold">electron-builder.yml</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-muted/40 p-2 rounded-lg border border-border/50">
+            <ShieldCheck className="h-3.5 w-3.5 text-foreground shrink-0" />
+            <span className="truncate text-foreground font-semibold">build-and-sign.yml</span>
           </div>
           <div className="flex items-center gap-1.5 bg-muted/40 p-2 rounded-lg border border-border/50">
             <Terminal className="h-3.5 w-3.5 text-foreground shrink-0" />
@@ -318,10 +386,6 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
           <div className="flex items-center gap-1.5 bg-muted/40 p-2 rounded-lg border border-border/50">
             <Terminal className="h-3.5 w-3.5 text-foreground shrink-0" />
             <span className="truncate text-foreground font-semibold">Install-Windows.vbs</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-muted/40 p-2 rounded-lg border border-border/50">
-            <FileCode className="h-3.5 w-3.5 text-foreground shrink-0" />
-            <span className="truncate text-foreground">package.json</span>
           </div>
         </div>
       </div>
@@ -336,5 +400,3 @@ export function SuccessScreen({ config, onDownload, onCreateAnother }: SuccessSc
     </motion.div>
   );
 }
-
-

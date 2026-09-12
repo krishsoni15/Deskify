@@ -1,6 +1,4 @@
-import type { GenerateRequestInput } from "@/lib/validation";
-
-export function generateMainJs(_config: GenerateRequestInput): string {
+export function generateMainJs(): string {
   return `const { app, BrowserWindow, nativeTheme, Menu, shell } = require("electron");
 const path = require("path");
 const config = require("./src/config");

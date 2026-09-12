@@ -3,7 +3,6 @@ import { slugify } from "@/lib/utils";
 
 export function generatePackageJson(config: GenerateRequestInput): string {
   const slug = slugify(config.name) || "desktop-app";
-  const appId = config.appId || `com.deskify.${slug}`;
 
   const pkg = {
     name: `${slug}-desktop`,
@@ -14,24 +13,11 @@ export function generatePackageJson(config: GenerateRequestInput): string {
     license: "MIT",
     scripts: {
       start: "electron . --no-sandbox",
-      dist: "electron-builder",
-      pack: "electron-builder --dir",
-    },
-    build: {
-      appId: appId,
-      productName: config.name,
-      files: ["main.js", "preload.js", "src/**/*", "assets/**/*"],
-      mac: {
-        category: "public.app-category.utilities",
-        target: ["dmg", "zip"],
-      },
-      win: {
-        target: ["nsis", "portable"],
-      },
-      linux: {
-        target: ["AppImage", "deb"],
-        category: "Utility",
-      },
+      build: "electron-builder --config electron-builder.yml",
+      "build:win": "electron-builder --win --config electron-builder.yml",
+      "build:mac": "electron-builder --mac --config electron-builder.yml",
+      "build:linux": "electron-builder --linux --config electron-builder.yml",
+      pack: "electron-builder --dir --config electron-builder.yml",
     },
     devDependencies: {
       electron: "^34.0.0",
@@ -41,3 +27,4 @@ export function generatePackageJson(config: GenerateRequestInput): string {
 
   return JSON.stringify(pkg, null, 2) + "\n";
 }
+
