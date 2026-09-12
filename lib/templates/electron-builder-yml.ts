@@ -47,10 +47,13 @@ dmg:
       type: "link"
       path: "/Applications"
 
-# Windows Configuration & Code Signing (NSIS Installer)
+# Windows Configuration & Code Signing (NSIS & MSI Installers)
 win:
   target:
     - target: "nsis"
+      arch:
+        - "x64"
+    - target: "msi"
       arch:
         - "x64"
     - target: "portable"
@@ -67,6 +70,11 @@ nsis:
   shortcutName: "${config.name}"
   artifactName: "${slug}-\${version}-win-setup.\${ext}"
   uninstallDisplayName: "Uninstall ${config.name}"
+
+msi:
+  oneClick: false
+  shortcutName: "${config.name}"
+  artifactName: "${slug}-\${version}-win-\${arch}.\${ext}"
 
 # Linux Configuration (AppImage & deb)
 linux:
